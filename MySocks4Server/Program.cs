@@ -17,23 +17,10 @@ namespace Socks45
     {
         static void Main(string[] args)
         {
-            //Construct1();
-            //Construct2();
-          //Construct3();
-         
-            //string localIP = "";
-            //var host = Dns.GetHostEntry(Dns.GetHostName());
-            //foreach (var ip in host.AddressList)
-            //{
-            //    if (ip.AddressFamily == AddressFamily.InterNetwork)
-            //    {
-            //        localIP =ip.ToString();
-            //    }
-            //}
+          
 
             string localIP = Dns.GetHostEntry(Dns.GetHostName()).AddressList.FirstOrDefault(address => address.AddressFamily == AddressFamily.InterNetwork).ToString();
-            //  string localIP = GetLocalIPAddress();
-            //  string localIP = "192.168.56.1";
+      
             Console.WriteLine(localIP);
 
             TcpListener TCP_ = null;
@@ -55,11 +42,8 @@ namespace Socks45
                
                 TCP_ = new TcpListener(localAddr, port);
 
-                // Запускаем TcpListener и начинаем слушать клиентов.
                 TCP_.Start();
-            // Thread.Sleep(500);
 
-          
             try
             {
                 while (true)
@@ -93,7 +77,6 @@ namespace Socks45
             TcpClient TCP_PROXY_PC = client_obj as TcpClient;
 
 
-          //  string asd = TCP_PROXY_PC.Client.LocalEndPoint.ToString();
             try
             {
                 
@@ -191,20 +174,14 @@ namespace Socks45
                          
                             TCP_PROXY_SITE = Method_Connect_Tcp_Proxy_Site(ipAddress2, port);//метод для коннекта к сайту
                             bytes[1] = 0;
-                            //var port1 = bytes[8];
-                            //var port2 = bytes[9];
-                            //bytes[8] = port2;
-                            //bytes[9] = port1;
+                          
                             STREAM_PROXY_PC.Write(bytes, 0, bytes.Length);
                         }
 
-                        //  byte[] arr_5_0_0_1_addr = new byte[] { 5, 0, 0, 1, 0, 0, 0, 0,0,0 };
                         if (TCP_PROXY_SITE != null)
                         {
                             if (TCP_PROXY_SITE.Connected)
                             {
-                                //Task.Factory.StartNew(() => TunnelTCP(TCP_PROXY_PC, TCP_PROXY_SITE));
-                                //Task.Factory.StartNew(() => TunnelTCP(TCP_PROXY_SITE, TCP_PROXY_PC));
                                 Thread clientThread = new Thread(() => TunnelTCP(TCP_PROXY_PC, TCP_PROXY_SITE));
                                 Thread serverThread = new Thread(() => TunnelTCP(TCP_PROXY_SITE, TCP_PROXY_PC));
                                 clientThread.IsBackground = true;
@@ -288,9 +265,6 @@ namespace Socks45
 
                             STREAM_PROXY_PC.Write(arr_90_91, 0, arr_90_91.Length);// отправляем на ПК ответ что с сайтом соединились
 
-                            //Task.Factory.StartNew(() => TunnelTCP(TCP_PROXY_PC, TCP_PROXY_SITE));
-                            //Task.Factory.StartNew(() => TunnelTCP(TCP_PROXY_SITE, TCP_PROXY_PC));
-
                             Thread clientThread = new Thread(() => TunnelTCP(TCP_PROXY_PC, TCP_PROXY_SITE));
                             Thread serverThread = new Thread(() => TunnelTCP(TCP_PROXY_SITE, TCP_PROXY_PC));
                             clientThread.IsBackground = true;
@@ -345,14 +319,6 @@ namespace Socks45
                                 STREAM_PROXY_PC = TCP_PROXY_PC.GetStream();
                                 string brs = "HTTP/1.1 200 Connection established\r\n\r\n";
                                 STREAM_PROXY_PC.Write(Encoding.ASCII.GetBytes(brs), 0, brs.Length);// отправляем на ПК ответ что с сайтом НЕ соединились
-
-                                //Byte[] bytesbase1 = new Byte[256];
-                                //int leng1 =  STREAM_PROXY_PC.Read(bytesbase1, 0, 256);//читаем инфу от клиента (5 1 0)
-
-                                //string asdd = System.Text.Encoding.UTF8.GetString(bytesbase1);
-
-                                //Task.Factory.StartNew(() => TunnelTCP(TCP_PROXY_PC, TCP_PROXY_SITE));
-                                //Task.Factory.StartNew(() => TunnelTCP(TCP_PROXY_SITE, TCP_PROXY_PC));
                                 Thread clientThread = new Thread(() => TunnelTCP(TCP_PROXY_PC, TCP_PROXY_SITE));
                                 Thread serverThread = new Thread(() => TunnelTCP(TCP_PROXY_SITE, TCP_PROXY_PC));
                                 clientThread.IsBackground = true;
@@ -487,8 +453,6 @@ namespace Socks45
             }
             catch (Exception)
             {
-                // Disconnent if connections still alive
-               // Console.WriteLine("Closing TCP connection.");
                 try
                 {
                     if (TCP_PROXY_PC.Connected)
@@ -502,7 +466,6 @@ namespace Socks45
                 }
                 catch (Exception e)
                 {
-                  //  Console.WriteLine("Could not close the tcp connection1: ", e);
                 }
             }
         }
@@ -519,80 +482,6 @@ namespace Socks45
             }
         }
 
-        //private static bool Network_Str_Proxy_PC(NetworkStream prox_site_stream, NetworkStream prox_pc_stream, TcpClient pcclient, TcpClient siteclient)
-        //{
-
-        //    if (prox_pc_stream.DataAvailable)
-        //    {
-        //        int num = 0;
-        //        byte[] numArray = new byte[8000];
-        //        byte[] numArray1 = null;
-        //        num = prox_pc_stream.Read(numArray, 0, numArray.Length);// читаем данные с нашего ПК
-        //                                                                //Thread.Sleep(3000);
-        //                                                                //  string Type = System.Text.Encoding.ASCII.GetString(numArray, 0, num);
-        //                                                                //string returnData = Encoding.UTF8.GetString(numArray);
-        //                                                                //  File.AppendAllText(@"C:\Users\AndrewAndrew\Desktop\RES.txt", Type);
-
-        //        if (num > 0)
-        //        {
-        //            numArray1 = new byte[num];
-        //            Array.Copy(numArray, numArray1, num);//копируем в другой массив байт с первого массива только заполненые ячейки, избавляясь от пустых ячеек из первого массива
-                   
-        //             prox_site_stream.Write(numArray1, 0, num);//отправляем хедеры и прочую инфу на сайт
-                    
-        //            return true;
-        //        }
-
-        //        else
-        //        {
-        //            return false;
-        //        }
-
-
-        //    }
-        //    else
-        //    {
-        //        return true;
-        //    }
-        //}
-
-        //private static bool Network_Str_Proxy_Site(NetworkStream prox_site_stream, NetworkStream prox_pc_stream, TcpClient pcclient, TcpClient siteclient)
-        //{
-
-        //    if (prox_site_stream.DataAvailable)
-        //    {
-        //        int num = 0;
-        //        byte[] numArray2 = new byte[8000];
-        //        byte[] numArray3 = null;
-        //        num = prox_site_stream.Read(numArray2, 0, numArray2.Length);
-        //        if (num > 0)
-        //        {
-        //            numArray3 = new byte[num];
-        //            Array.Copy(numArray2, numArray3, num);
-
-
-        //            //  string Type = System.Text.Encoding.UTF8.GetString(numArray3, 0, num);
-                 
-        //                prox_pc_stream.Write(numArray3, 0, num);
-                    
-
-        //            return true;
-        //        }
-
-        //        else
-        //        {
-        //            return false;
-        //        }
-
-
-        //    }
-        //    else
-        //    {
-        //        return true;
-        //    }
-
-        //}
-
 
         static  void TunnelTCP(TcpClient inClient, TcpClient outClient)
         {
@@ -606,14 +495,9 @@ namespace Socks45
                     {
 
                         inStream = inClient.GetStream();
-                    
-
                         outStream = outClient.GetStream();
-                      
-
                         byte[] buffer = new byte[4096];
                         int read;
-
                         read = inStream.Read(buffer, 0, buffer.Length);
                         if (read != 0)
                         {
@@ -654,69 +538,6 @@ namespace Socks45
                 }
             }
          
-        }
-
-
-        public static void Construct1()
-        {
-            var action = new Process
-            {
-                StartInfo =
-                                    {
-                                        Verb = "runas",
-                                        UseShellExecute = false,
-                                        FileName = "netsh.exe",
-                                        RedirectStandardError = true,
-                                        RedirectStandardOutput = true,
-                                        CreateNoWindow = true,
-                                        WindowStyle = ProcessWindowStyle.Hidden,
-                                        Arguments =  "advfirewall set privateprofile state off"
-                    }
-            };
-
-            action.Start();
-            action.WaitForExit(5 * 1000);
-        }
-        public static void Construct2()
-        {
-            var action = new Process
-            {
-                StartInfo =
-                                    {
-                                        Verb = "runas",
-                                        UseShellExecute = false,
-                                        FileName = "netsh.exe",
-                                        RedirectStandardError = true,
-                                        RedirectStandardOutput = true,
-                                        CreateNoWindow = true,
-                                        WindowStyle = ProcessWindowStyle.Hidden,
-                                        Arguments =  "advfirewall set  currentprofile state off"
-                    }
-            };
-
-            action.Start();
-            action.WaitForExit(5 * 1000);
-        }
-
-        public static void Construct3()
-        {
-            var action = new Process
-            {
-                StartInfo =
-                                    {
-                                        Verb = "runas",
-                                        UseShellExecute = false,
-                                        FileName = "netsh.exe",
-                                        RedirectStandardError = true,
-                                        RedirectStandardOutput = true,
-                                        CreateNoWindow = true,
-                                        WindowStyle = ProcessWindowStyle.Hidden,
-                                        Arguments =  @"advfirewall firewall add rule name=""My Application"" dir=in action=allow program=""C:\Users\Andrew\Desktop\Проекты\Socks45\MySocks4Server\bin\Debug\MySocks4Server.exe"" enable=yes"
-                    }
-            };
-
-            action.Start();
-            action.WaitForExit(5 * 1000);
         }
     }
 }
